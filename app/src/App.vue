@@ -8,11 +8,7 @@
   </div>
 </template>
 
-<style lang="scss">
-@import '~bootstrap/scss/bootstrap.scss';
-@import "~@/assets/scss/vendors/bootstrap-vue/_custom";
-@import '~bootstrap-vue/src/index.scss';
-
+<style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
