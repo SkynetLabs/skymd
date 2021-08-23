@@ -17,7 +17,7 @@ jobs:
       run: npm run build
       working-directory: app
     - name: Deploy to Skynet
-      uses: kwypchlo/deploy-to-skynet-action@main
+      uses: SkynetLabs/deploy-to-skynet-action@v2
       with:
         upload-dir: app/dist
         github-token: ${{ secrets.GITHUB_TOKEN }}
