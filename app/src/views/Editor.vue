@@ -66,7 +66,7 @@ export default {
      * Save data to local storage + manufactured loading time for aesthetics
      */
     Save(data) {
-      if (!ready) {
+      if (!this.ready) {
         return;
       }
       return new Promise(async (resolve, reject) => {
