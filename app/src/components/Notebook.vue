@@ -9,7 +9,6 @@
   ></iframe>
 </template>
 <script>
-import { StarboardEmbed } from "starboard-wrap";
 import * as iFrameResizer from "iframe-resizer/js/iframeResizer";
 export default {
   props: ["value"],
@@ -32,6 +31,11 @@ const greeting = "Hello world!";
 greeting`,
     };
   },
+  /**
+   * Set up custom component for v-model. 
+   * Initial value of the editor bound to input or placeholder text. 
+   * Emits the new value when changed 
+   */
   mounted() {
     const initialNotebookContent = this.value || this.placeholder;
     const updateContent = (function (data) {
