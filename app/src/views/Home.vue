@@ -5,6 +5,7 @@
       :menu="menu"
       :collapsed="collapsed"
       @toggle-collapse="onToggleCollapse"
+      :disableHover="true"
     >
       <template v-slot:toggle-icon
         ><b-icon
