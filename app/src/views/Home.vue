@@ -4,6 +4,7 @@
     <sidebar-menu
       :menu="menu"
       :collapsed="collapsed"
+      :disableHover="true"
       @toggle-collapse="onToggleCollapse"
     >
       <template v-slot:toggle-icon
@@ -243,5 +244,14 @@ export default {
 .container {
   padding-left: 355px;
   transition: 0.3s ease;
+}
+
+</style>
+<style>
+.v-sidebar-menu .vsm--mobile-item {
+  display: none !important;
+}
+.vsm--icon {
+  background-color: transparent !important;
 }
 </style>
