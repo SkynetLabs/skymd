@@ -4,6 +4,7 @@
     <sidebar-menu
       :menu="menu"
       :collapsed="collapsed"
+      :disableHover="true"
       @toggle-collapse="onToggleCollapse"
     >
       <template v-slot:toggle-icon
@@ -30,7 +31,6 @@
                   ><b-icon icon="tag-fill" font-scale="1"></b-icon> Tags</span
                 >
               </template>
-
               <b-dropdown-item v-for="tag in tags" :key="tag">{{
                 tag
               }}</b-dropdown-item>
@@ -214,6 +214,7 @@ export default {
       }
       return data
     }
+
   },
 };
 </script>
@@ -224,5 +225,13 @@ export default {
 .container {
   padding-left: 355px;
   transition: 0.3s ease;
+}
+</style>
+<style>
+.v-sidebar-menu .vsm--mobile-item {
+  display: none !important;
+}
+.vsm--icon {
+  background-color: transparent !important;
 }
 </style>
