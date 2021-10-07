@@ -45,20 +45,6 @@
                 :icon="view == 'Grid' ? 'grid3x3-gap-fill' : 'view-list'"
               ></b-icon
             ></b-button>
-            <b-dropdown
-              id="dropdown-1"
-              text="Sort"
-              variant="outline-secondary"
-              class="m-md-2"
-            >
-              <b-dropdown-item
-                ><span class="float-right"> Grid View</span></b-dropdown-item
-              >
-              <b-dropdown-item
-                ><b-icon icon="view-list"></b-icon
-                ><span class="float-right"> List View</span></b-dropdown-item
-              >
-            </b-dropdown>
           </b-col>
         </b-row>
       </div>
@@ -165,12 +151,18 @@ export default {
         return result;
       }
     },
+    /**
+     * Computed function for sorting data reactively, can be combined
+     */
     sorts: function() {
       return {
         titleASC: (data) => data.sort((a, b) => a["title"].localCompare(b["title"])),
         titleDSC: (data) => data.sort((a, b) => a["title"].localCompare(b["title"])).reverse(),
       };
     },
+    /**
+     * Computed function for filtering data reactively, can be combined
+     */
     filters: function() {
       return {
         untagged: (data)  => { return data.filter((x) => !x["tag"] )},
