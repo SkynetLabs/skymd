@@ -31,29 +31,20 @@
                   ><b-icon icon="tag-fill" font-scale="1"></b-icon> Tags</span
                 >
               </template>
-
-              <b-dropdown-item>First Action</b-dropdown-item>
-              <b-dropdown-item>Second Action</b-dropdown-item>
-              <b-dropdown-item>Third Action</b-dropdown-item>
-              <b-dropdown-divider></b-dropdown-divider>
-              <b-dropdown-item active>Active action</b-dropdown-item>
-              <b-dropdown-item disabled>Disabled action</b-dropdown-item>
+              <b-dropdown-item v-for="tag in tags" :key="tag">{{
+                tag
+              }}</b-dropdown-item>
             </b-dropdown>
           </b-col>
           <b-col class="text-right">
-            <b-dropdown
-              id="dropdown-1"
-              text="Layout"
+            <b-button
+              @click="toggleView()"
+              class="text-decoration-none"
               variant="outline-secondary"
-              class="m-md-2"
-            >
-              <b-dropdown-item>First Action</b-dropdown-item>
-              <b-dropdown-item>Second Action</b-dropdown-item>
-              <b-dropdown-item>Third Action</b-dropdown-item>
-              <b-dropdown-divider></b-dropdown-divider>
-              <b-dropdown-item active>Active action</b-dropdown-item>
-              <b-dropdown-item disabled>Disabled action</b-dropdown-item>
-            </b-dropdown>
+              ><b-icon
+                :icon="view == 'Grid' ? 'grid3x3-gap-fill' : 'view-list'"
+              ></b-icon
+            ></b-button>
           </b-col>
         </b-row>
       </div>
@@ -65,25 +56,7 @@
         <b-col class="col-auto">Untagged</b-col>
         <b-col class="col"><hr /></b-col>
       </b-row>
-      <b-row>
-        <b-col sm="3" v-for="item in data" :key="item.title">
-          <b-card
-            class="m-1"
-            v-if="!item['tag']"
-            :title="item.note['title']"
-            align="left"
-          >
-            <b-card-text>
-              <b-card-text class="small text-muted">
-                <b-icon icon="clock-fill"></b-icon>
-                Last updated
-                {{ timeSince(new Date(item.note["changed"])) }}
-                ago</b-card-text
-              >
-            </b-card-text>
-          </b-card>
-        </b-col>
-      </b-row>
+      <item :view="view" :data="filter([{function: filters.untagged}])"></item>
       <br />
       <!-- #endregion-->
       <!-- #region Make a header for every tag and fill in the notes that belong to it -->
@@ -94,29 +67,7 @@
           <b-col class="col"><hr /></b-col>
           <br />
         </b-row>
-        <b-row class="justify-content-start">
-          <b-col
-            sm="3"
-            v-for="item in data.filter((x) => x['tag'] == tag)"
-            :key="item.title"
-          >
-            <b-card
-              class="m-1"
-              v-if="item['tag'] == tag"
-              :title="item.note['title']"
-              align="left"
-            >
-              <b-card-text>
-                <b-card-text class="small text-muted">
-                  <b-icon icon="clock-fill"></b-icon>
-                  Last updated
-                  {{ timeSince(new Date(item.note["changed"])) }}
-                  ago</b-card-text
-                >
-              </b-card-text>
-            </b-card>
-          </b-col>
-        </b-row>
+        <item :data="filter([{function: filters.tag, params: [tag]}])" :view="view"></item>
         <br />
       </div>
       <!-- #endregion -->
@@ -130,16 +81,18 @@
 import { BIcon } from "bootstrap-vue";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
 import { SidebarMenu } from "vue-sidebar-menu";
-
+import Item from "../components/Item.vue";
 export default {
   name: "Home",
   components: {
     BIcon,
     SidebarMenu,
+    Item,
   },
   data() {
     return {
       collapsed: true,
+      view: "Grid",
       menu: [
         {
           header: true,
@@ -152,9 +105,9 @@ export default {
           icon: {
             element: "b-icon",
             attributes: {
-              icon: "file-earmark-plus"
-            }
-          }
+              icon: "file-earmark-plus",
+            },
+          },
         },
       ],
       data: [
@@ -198,42 +151,62 @@ export default {
         return result;
       }
     },
+    /**
+     * Computed function for sorting data reactively, can be combined
+     */
+    sorts: function() {
+      return {
+        titleASC: (data) => data.sort((a, b) => a["title"].localCompare(b["title"])),
+        titleDSC: (data) => data.sort((a, b) => a["title"].localCompare(b["title"])).reverse(),
+      };
+    },
+    /**
+     * Computed function for filtering data reactively, can be combined
+     */
+    filters: function() {
+      return {
+        untagged: (data)  => { return data.filter((x) => !x["tag"] )},
+        tag: (data, tag) => { return data.filter((x) => x["tag"] == tag )},
+        title: (query) => { return data.filter((x) => x['title'].includes(query)) }
+      };
+    },
   },
   methods: {
-    /**
-     * Nice formatting for human readable dates
-     */
-    timeSince(date) {
-      console.log(date);
-      var seconds = Math.floor((new Date() - date) / 1000);
-      var interval = seconds / 31536000;
-      if (interval > 1) {
-        return Math.floor(interval) + " years";
-      }
-      interval = seconds / 2592000;
-      if (interval > 1) {
-        return Math.floor(interval) + " months";
-      }
-      interval = seconds / 86400;
-      if (interval > 1) {
-        return Math.floor(interval) + " days";
-      }
-      interval = seconds / 3600;
-      if (interval > 1) {
-        return Math.floor(interval) + " hours";
-      }
-      interval = seconds / 60;
-      if (interval > 1) {
-        return Math.floor(interval) + " minutes";
-      }
-      return Math.floor(seconds) + " seconds";
-    },
     /**
      * Menu collapse event
      */
     onToggleCollapse(collapsed) {
       this.collapsed = collapsed;
     },
+    /**
+     * Toggle list view vs grid view
+     */
+    toggleView() {
+      this.view = this.view == "Grid" ? "List" : "Grid";
+    },
+    /**
+     * Set up to allow stacking different filters
+     */
+    filter(filters){
+      let data = JSON.parse(JSON.stringify(this.data))
+      for(let i = 0; i < filters.length; i++){
+        let action = filters[0]
+        data = action.function(data, ...(action['params'] || []))
+      }
+      return data
+    },
+    /**
+     * Set up to allow stacking different sorts
+     */
+    sort(sorters){
+      let data = JSON.parse(JSON.stringify(this.data))
+      for(let i = 0; i < sorters.length; i++){
+        let action = sorters[0]
+        data = action.function(data, ...(action['params'] || []))
+      }
+      return data
+    }
+
   },
 };
 </script>
@@ -245,7 +218,6 @@ export default {
   padding-left: 355px;
   transition: 0.3s ease;
 }
-
 </style>
 <style>
 .v-sidebar-menu .vsm--mobile-item {
