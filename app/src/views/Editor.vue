@@ -8,7 +8,7 @@
 
       <b-collapse id="nav-text-collapse" is-nav>
         <b-navbar-nav>
-          <b-nav-item :disabled="!ready" @click="Save(data)"><b-icon icon="cloud-upload"></b-icon> Save</b-nav-item>
+          <!-- <b-nav-item :disabled="!ready" @click="Save()"><b-icon icon="cloud-upload"></b-icon> Save</b-nav-item> -->
         </b-navbar-nav>
       </b-collapse>
       <b-avatar variant="light" rounded></b-avatar>
@@ -26,7 +26,7 @@
     <notebook
       v-if="this.mounted"
       v-show="this.ready"
-      v-model="data"
+      v-model="note['data']"
       @ready="Ready()"
     ></notebook>
     <div class="container" v-if="!this.mounted || !this.ready">
@@ -50,7 +50,7 @@ export default {
     return {
       value: 0,
       max: 100,
-      data: null,
+      note: {},
       mounted: false,
       ready: false,
     };
@@ -65,33 +65,51 @@ export default {
     /**
      * Save data to local storage + manufactured loading time for aesthetics
      */
-    Save(data) {
-      if (!this.ready) {
-        return;
-      }
-      return new Promise(async (resolve, reject) => {
-        let interval = setInterval(() => {
-          if (typeof data != "string") {
-            data == null;
-          }
-          localStorage.setItem("SkyNote", data);
-          this.value++;
-          console.log(this.value);
-          if (this.value > this.max) {
-            this.value = 0;
-            clearInterval(interval);
-            resolve();
-          }
-        }, 30);
-      });
+    Save() {
+    //   if (!this.ready) {
+    //     return;
+    //   }
+    //   let interval = setInterval(function() {
+    //     this.value++;
+    //     if (this.value > this.max) {
+    //       this.value = 0;
+    //       this.note.changed = Date.now()
+    //       this.$store.dispatch('Notes/saveNote', this.note)
+    //       clearInterval(interval);
+    //     }
+    //   }.bind(this), 30);
     },
   },
   /**
    * Preload data from local storage if it exists
    */
-  mounted() {
-    this.data = localStorage.getItem("SkyNote") || null;
-    this.mounted = true;
+  mounted: async function() {
+    this.$watch(
+      () => this.$route.params,
+      (toParams, previousParams) => {
+        // react to route changes...
+        if(this.$route.params["id"]){
+          this.note = this.$store.state.Notes.list.filter(x => x.id == this.$route.params.id)[0]
+          this.mounted = true
+        }
+        else {
+          this.$store.dispatch('Notes/newNote').then(((note) => {
+            this.$router.push({ name: 'Editor', params: { id: note.id } })
+          }).bind(this))
+        }
+      }
+    )
+    if(this.$route.params["id"]){
+      this.note = this.$store.state.Notes.list.filter(x => x.id == this.$route.params.id)[0]
+      this.mounted = true
+    }
+    else {
+      this.$store.dispatch('Notes/newNote').then(((note) => {
+        this.$router.push({ name: 'Editor', params: { id: note.id } })
+      }).bind(this))
+    }
+
+
   },
 };
 </script>

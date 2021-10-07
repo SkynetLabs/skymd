@@ -8,6 +8,23 @@
     <router-view/>
   </div>
 </template>
+<script>
+export default {
+  // created(){
+  //   this.$store.dispatch("Notes/loadNotes").then(() => {
+  //     this.$bvToast.toast(`Your notes were successfully loaded`, {
+  //       title: 'Success',
+  //       variant: 'success'
+  //     })                
+  //   }).catch((err) => {
+  //     this.$bvToast.toast(`${err['message']}`, {
+  //       title: 'Error',
+  //       variant: 'danger'
+  //     })                
+  //   })
+  // }
+}
+</script>
 
 <style lang="scss">
   @import '~bootstrap/scss/bootstrap.scss';

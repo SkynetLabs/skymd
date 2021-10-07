@@ -5,6 +5,7 @@
       :menu="menu"
       :collapsed="collapsed"
       @toggle-collapse="onToggleCollapse"
+      :disableHover="true"
     >
       <template v-slot:toggle-icon
         ><b-icon
@@ -15,6 +16,14 @@
     <!-- #endregion -->
     <!-- #region Main Page Content -->
     <div class="container" :class="collapsed ? 'collapsed' : ''">
+      <!-- #region No Notes -->
+      <div v-if="data.length == 0">
+        <b-jumbotron class="mt-4" header="SkyMD" lead="Create a new note to get started">
+          <b-button variant="primary" to="Editor">New Note</b-button>
+        </b-jumbotron>
+      </div>
+      <!-- #endregion -->
+      <div v-else>
       <!-- #region Toolbar -->
       <div class="mt-4">
         <b-row>
@@ -87,6 +96,7 @@
       <!-- #endregion -->
     </div>
     <!-- #endregion -->
+    </div>
   </div>
 </template>
 
@@ -114,39 +124,25 @@ export default {
           hiddenOnCollapse: true,
         },
         {
-          href: "/",
+          href: "/editor",
           title: "New Note",
           icon: {
             element: "b-icon",
             attributes: {
-              icon: "file-earmark-plus",
-            },
-          },
+              icon: "file-earmark-plus"
+            }
+          }
         },
-      ],
-      data: [
-        { note: { title: "Sky MD", changed: 1629328556890 } },
-        { tag: "🔥", note: { title: "Hot takes", changed: 1629346676313 } },
-        { tag: "🔥", note: { title: "🌶", changed: 1629346676313 } },
-        {
-          tag: "PANCAKES",
-          note: {
-            title: "How to Improve Your Pancake Game",
-            changed: 1629328556890,
-          },
-        },
-        {
-          tag: "PANCAKES",
-          note: {
-            title: "I ate pancakes for breakfast today",
-            changed: 1629346808004,
-          },
-        },
-        { tag: "PANCAKES", note: { title: "🥞", changed: 1629346808004 } },
       ],
     };
   },
   computed: {
+    /**
+     * The notes list
+     */
+    data(){
+      return this.$store.state.Notes.list
+    },
     /**
      * Array of all existing tags
      */
